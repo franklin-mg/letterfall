@@ -220,11 +220,16 @@
         
         .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
         .active { display: flex; }
+
+        #confetti-layer {
+            position: fixed; inset: 0; pointer-events: none; z-index: 3000;
+        }
     </style>
 </head>
 <body>
 
 <div id="bubbles-bg"></div>
+<canvas id="confetti-layer"></canvas>
 
 <div class="container">
     <div class="header-top-row">
@@ -260,7 +265,7 @@
 
     <div class="footer-row">
         <span>TECNOTIPS © 2026</span>
-<span>V1.1</span>
+        <span>V1.1</span>
     </div>
 </div>
 
@@ -269,15 +274,6 @@
 </div>
 
 <script>
-    // Registro del Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW registrado'))
-                .catch(err => console.log('Error SW', err));
-        });
-    }
-
     const data = {
     "Frutas": [
         "MANZANA", "PERA", "PLATANO", "SANDIA", "MANGO", 
@@ -317,6 +313,11 @@
     let state = { lives: 6, reward: 0, word: "", guesses: [], mistakes: 0, tips: 2, correctStreak: 0 };
     const cvs = document.getElementById('hangman-canvas');
     const ctx = cvs.getContext('2d');
+    
+    // Configuración Confeti
+    const confCanvas = document.getElementById('confetti-layer');
+    const confCtx = confCanvas.getContext('2d');
+    let confetti = [];
 
     function createBubbles() {
         const container = document.getElementById('bubbles-bg');
@@ -344,6 +345,13 @@
             b.onclick = () => start(c);
             list.appendChild(b);
         });
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+    }
+
+    function resizeConfetti() {
+        confCanvas.width = window.innerWidth;
+        confCanvas.height = window.innerHeight;
     }
 
     function start(c) {
@@ -441,20 +449,85 @@
         }
     }
 
-    function end(win) {
-        const over = document.getElementById('overlay');
-        const box = document.getElementById('modal-box');
-        over.style.display = 'flex';
-        if (win) {
-            state.reward += 100;
-            box.innerHTML = `<h2 style="color:#10b981">¡GENIAL!</h2><p>Eres un maestro.</p><div style="font-size:2rem">🎁 +$100</div><button class="cat-btn" style="margin-top:15px" onclick="reset()">OTRA PARTIDA</button>`;
-        } else {
-            box.innerHTML = `<h2 style="color:#ef4444">¡OH NO!</h2><p>Era: <b style="color:#4f46e5">${state.word}</b></p><button class="cat-btn" style="margin-top:15px; background:#ef4444" onclick="reset()">REINTENTAR</button>`;
+    function startConfetti() {
+        confetti = [];
+        for (let i = 0; i < 100; i++) {
+            confetti.push({
+                x: Math.random() * confCanvas.width,
+                y: -10,
+                r: Math.random() * 6 + 4,
+                d: Math.random() * 10 + 10,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                tilt: Math.random() * 10 - 5
+            });
         }
-        document.getElementById('reward').innerText = state.reward;
+        requestAnimationFrame(updateConfetti);
+    }
+
+    function updateConfetti() {
+        confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+        let active = false;
+        confetti.forEach(p => {
+            p.y += p.d * 0.2;
+            p.x += Math.sin(p.y * 0.05);
+            if (p.y < confCanvas.height) {
+                active = true;
+                confCtx.beginPath();
+                confCtx.lineWidth = p.r;
+                confCtx.strokeStyle = p.color;
+                confCtx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                confCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                confCtx.stroke();
+            }
+        });
+        if (active) requestAnimationFrame(updateConfetti);
+    }
+
+    function playApplause() {
+        if (!window.AudioContext) return;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const duration = 2;
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * 0.1;
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        noise.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.start();
+    }
+
+    function end(win) {
+        if (win) {
+            startConfetti();
+            playApplause();
+            state.reward += 100;
+            document.getElementById('reward').innerText = state.reward;
+            
+            setTimeout(() => {
+                const over = document.getElementById('overlay');
+                const box = document.getElementById('modal-box');
+                over.style.display = 'flex';
+                box.innerHTML = `<h2 style="color:#10b981">¡FANTÁSTICO!</h2><p>¡Palabra acertada!</p><div style="font-size:2rem">🎁 +$100</div><button class="cat-btn" style="margin-top:15px" onclick="reset()">OTRA PARTIDA</button>`;
+            }, 3000);
+        } else {
+            const over = document.getElementById('overlay');
+            const box = document.getElementById('modal-box');
+            over.style.display = 'flex';
+            box.innerHTML = `<h2 style="color:#ef4444">¡OH NO!</h2><p>Era: <b style="color:#4f46e5">${state.word}</b></p><button class="cat-btn" style="margin-top:15px; background:#ef4444" onclick="reset()">REINTENTAR</button>`;
+            document.getElementById('reward').innerText = state.reward;
+        }
     }
 
     function reset() {
+        confCtx.clearRect(0,0,confCanvas.width, confCanvas.height);
+        confetti = [];
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('hint-box').style.display = 'none';
         document.getElementById('screen-game').classList.remove('active');
@@ -465,4 +538,3 @@
 </script>
 </body>
 </html>
-
