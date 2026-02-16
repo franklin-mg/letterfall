@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gallows - Checo</title>
-    
-    <!-- PWA Meta Tags -->
+    <title>Letterfall - Tecnotips</title>
+    <!-- Vinculación del Manifiesto para PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e3a8a">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+    <meta name="theme-color" content="#4f46e5">
+    
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #991b1b;
-            --accent: #f59e0b;
-            --text: #1f2937;
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary-bg: #6366f1;
+            --accent-warm: #f43f5e;
+            --accent-sunny: #fbbf24;
+            --cyan-glow: #22d3ee;
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --text-dark: #1e293b;
         }
 
         * {
@@ -28,121 +25,153 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0f172a;
-            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                              radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%);
-            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 40%, #db2777 100%);
             margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--text);
-            padding: 15px;
+            overflow: hidden;
+            position: relative;
+            color: var(--text-dark);
         }
 
-        #install-banner {
-            display: none;
-            position: fixed;
-            top: 20px;
-            background: var(--accent);
-            color: #78350f;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 800;
-            z-index: 1000;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            cursor: pointer;
-            border: 2px solid white;
-            animation: slideIn 0.5s ease-out;
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-bubbles 20s infinite linear;
         }
 
-        @keyframes slideIn { from { transform: translateY(-100px); } to { transform: translateY(0); } }
+        @keyframes float-bubbles {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+        }
 
         .container {
-            background: var(--card-bg);
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
-            max-width: 450px;
-            padding: 1.5rem; 
-            border-radius: 28px;
+            width: 90%;
+            max-width: 420px;
+            padding: 1.5rem;
+            padding-top: 3.5rem;
+            border-radius: 30px; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
             position: relative;
+            border: 4px solid rgba(255, 255, 255, 0.3);
         }
 
-        .header-top {
+        .header-top-row {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-pill {
+            background: var(--text-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 15px 0 5px 0;
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .hint-container {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            background: #fef3c7;
+            border-radius: 15px;
+            border: 2px dashed #f59e0b;
+            display: none;
+        }
+
+        .hint-text { color: #b45309; font-weight: 700; font-size: 0.85rem; }
+
+        .stats-wrapper {
             display: flex;
             justify-content: space-between;
             width: 100%;
             margin-bottom: 15px;
-            font-size: 0.7rem;
-            color: #94a3b8;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            margin: 0 0 15px 0;
-            color: var(--primary);
-            letter-spacing: 3px;
-            font-weight: 900;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            width: 100%;
-            margin-bottom: 20px;
         }
 
-        .stat-card {
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 15px;
+        .stat-bubble {
+            flex: 1;
+            background: white;
+            padding: 8px;
+            border-radius: 18px;
             font-weight: 800;
-            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
-        .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .active { display: flex; }
+        .observer-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #166534;
+        }
 
         .cat-btn {
             width: 100%;
-            padding: 15px;
-            margin: 5px 0;
+            padding: 16px;
+            margin: 6px 0;
             border: none;
-            border-radius: 15px;
-            background: white;
-            color: var(--primary);
+            border-radius: 20px;
+            background: #4f46e5;
+            color: white;
             font-weight: 800;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+            box-shadow: 0 6px 0 #3730a3;
             cursor: pointer;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s;
         }
-        .cat-btn:active { transform: scale(0.98); background: #f8fafc; }
+        .cat-btn:nth-child(even) { background: #ec4899; box-shadow: 0 6px 0 #9d174d; }
 
         #hangman-canvas {
-            background: white;
+            background: #f8fafc;
             border-radius: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
+            margin: 10px 0;
+            border: 3px solid #e2e8f0;
+            width: 100%;
+            height: auto;
         }
 
         .word-box {
-            font-size: 1.8rem;
-            letter-spacing: 6px;
+            font-size: 2.2rem;
+            letter-spacing: 5px;
             margin: 15px 0;
-            font-family: monospace;
             font-weight: 900;
-            color: var(--primary);
+            color: #334155;
         }
 
         .keyboard {
@@ -154,63 +183,85 @@
 
         .key {
             padding: 10px 0;
-            border: 1px solid #e2e8f0;
+            border: none;
             background: white;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.8rem;
+            border-radius: 10px;
+            font-weight: 800;
+            box-shadow: 0 4px 0 #cbd5e1;
             cursor: pointer;
         }
-        .key.correct { background: #10b981; color: white; }
-        .key.wrong { background: #ef4444; color: white; }
-        .key:disabled { opacity: 0.5; cursor: default; }
+        .key.correct { background: #4ade80; color: white; box-shadow: 0 4px 0 #166534; }
+        .key.wrong { background: #f87171; color: white; box-shadow: 0 4px 0 #991b1b; }
 
-        .footer-watermark {
-            margin-top: 20px;
-            font-size: 0.55rem;
-            color: #cbd5e1;
+        .footer-row {
+            margin-top: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
         .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            position: fixed; inset: 0; background: rgba(79, 70, 229, 0.4);
             display: none; justify-content: center; align-items: center; z-index: 2000;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
         }
-        .modal { background: white; padding: 30px; border-radius: 24px; width: 85%; max-width: 320px; text-align: center; }
+        .modal { 
+            background: white; padding: 30px; border-radius: 30px; 
+            width: 85%; max-width: 320px; text-align: center; 
+            border: 6px solid #4f46e5;
+        }
+        
+        .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .active { display: flex; }
     </style>
 </head>
 <body>
 
-<div id="install-banner">INSTALAR GALLOWS 📲</div>
+<div id="bubbles-bg"></div>
 
 <div class="container">
-    <div class="header-top">
-        <span>Gallows</span>
-        <span style="opacity: 0.3;">CHECHO</span>
+    <div class="header-top-row">
+        <div class="top-pill">TECNOTIPS</div>
+        <div class="top-pill" style="background: var(--accent-warm);">CHÉCHO</div>
     </div>
 
-    <h1>GALLOWS</h1>
+    <h1>LETTERFALL</h1>
 
-    <div class="stats-grid">
-        <div class="stat-card">Vidas: <span id="lives">5</span> ❤️</div>
-        <div class="stat-card">Premio: <span id="reward">$0</span> 💰</div>
+    <div id="hint-box" class="hint-container">
+        <span id="hint-text" class="hint-text"></span>
     </div>
 
     <div id="screen-start" class="screen active">
-        <p style="font-weight: bold; color: #64748b;">Elige Categoría:</p>
+        <p style="font-weight: 800; color: #64748b; margin: 10px 0 15px 0;">¡ELIGE UN TEMA!</p>
         <div id="cat-list" style="width: 100%;"></div>
     </div>
 
     <div id="screen-game" class="screen">
-        <canvas id="hangman-canvas" width="180" height="180"></canvas>
+        <div class="stats-wrapper">
+            <div class="stat-bubble">❤️ <span id="lives">6</span></div>
+            <button id="observer-btn" class="observer-btn" onclick="useObserver()">
+                👁️ <span id="tips-count">2</span>
+            </button>
+            <div class="stat-bubble" style="background: #fffbeb;">💰 <span id="reward">0</span></div>
+        </div>
+        
+        <canvas id="hangman-canvas" width="200" height="160"></canvas>
         <div id="word-display" class="word-box"></div>
         <div id="kb" class="keyboard"></div>
-        <button class="cat-btn" style="margin-top:20px; background: var(--primary); color: white;" onclick="solve()">RESOLVER</button>
+        <button class="cat-btn" style="background:#fbbf24; color:#92400e; box-shadow:0 4px 0 #d97706; margin-top:15px" onclick="solve()">¿SABES LA PALABRA?</button>
     </div>
 
-    <div class="footer-watermark">Developed by Tecnotic © 2026</div>
+    <div class="footer-row">
+        <span>VIBE EDITION</span>
+        <span>TECNOTIC © 2026</span>
+    </div>
 </div>
 
 <div id="overlay" class="overlay">
@@ -218,44 +269,54 @@
 </div>
 
 <script>
-    // --- PWA LOGIC ---
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        document.getElementById('install-banner').style.display = 'block';
-    });
-
-    async function installApp() {
-        if (!deferredPrompt) return;
-        document.getElementById('install-banner').style.display = 'none';
-        deferredPrompt.prompt();
-        deferredPrompt = null;
-    }
-    document.getElementById('install-banner').onclick = installApp;
-
-    // Registro del Service Worker con protección para entornos de desarrollo/blob
-    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    // Registro del Service Worker
+    if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado correctamente'))
-                .catch(err => console.warn('No se pudo registrar el SW (normal en entornos de preview):', err));
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW registrado'))
+                .catch(err => console.log('Error SW', err));
         });
     }
 
-    // --- GAME LOGIC ---
     const data = {
-        "Frutas": ["MANZANA", "PERA", "PLATANO", "SANDIA", "MANGO"],
-        "Cine": ["AVATAR", "TITANIC", "SHREK", "BATMAN", "ALIEN"],
-        "Autos": ["TESLA", "FERRARI", "MAZDA", "TOYOTA", "FORD"]
+        "Frutas": ["MANZANA", "PERA", "PLATANO", "SANDIA", "MANGO", "KIWI", "CEREZA"],
+        "Cine": ["AVATAR", "TITANIC", "SHREK", "BATMAN", "ALIEN", "GLADIADOR"],
+        "Tecno": ["IPHONE", "GOOGLE", "PYTHON", "LAPTOP", "TABLET", "ROBOT"],
+        "Deportes": ["FUTBOL", "TENIS", "BOXEO", "BASQUET", "RUGBY", "GOLF"],
+        "Animales": ["ELEFANTE", "TIGRE", "JIRAFA", "DELFIN", "AGUILA", "CEBRA"]
     };
 
-    let state = { lives: 5, reward: 0, word: "", guesses: [], mistakes: 0 };
+    const hints = {
+        "Frutas": "Deliciosa y natural",
+        "Cine": "Magia en la pantalla",
+        "Tecno": "Gadgets e innovación",
+        "Deportes": "Acción y competencia",
+        "Animales": "Criaturas del mundo"
+    };
+
+    let state = { lives: 6, reward: 0, word: "", guesses: [], mistakes: 0, tips: 2, correctStreak: 0 };
     const cvs = document.getElementById('hangman-canvas');
     const ctx = cvs.getContext('2d');
 
+    function createBubbles() {
+        const container = document.getElementById('bubbles-bg');
+        for (let i = 0; i < 15; i++) {
+            const b = document.createElement('div');
+            b.className = 'bubble';
+            const size = Math.random() * 60 + 20;
+            b.style.width = size + 'px';
+            b.style.height = size + 'px';
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.animationDelay = Math.random() * 5 + 's';
+            b.style.animationDuration = Math.random() * 10 + 10 + 's';
+            container.appendChild(b);
+        }
+    }
+
     function init() {
+        createBubbles();
         const list = document.getElementById('cat-list');
+        list.innerHTML = "";
         Object.keys(data).forEach(c => {
             const b = document.createElement('button');
             b.className = 'cat-btn';
@@ -267,33 +328,35 @@
 
     function start(c) {
         state.word = data[c][Math.floor(Math.random()*data[c].length)];
-        state.guesses = [];
-        state.mistakes = 0;
+        state.guesses = []; state.mistakes = 0; state.lives = 6; state.correctStreak = 0;
+        document.getElementById('hint-text').innerText = hints[c];
+        document.getElementById('hint-box').style.display = 'block';
         document.getElementById('screen-start').classList.remove('active');
         document.getElementById('screen-game').classList.add('active');
-        drawBase();
-        renderKb();
-        update();
+        document.getElementById('lives').innerText = state.lives;
+        document.getElementById('tips-count').innerText = state.tips;
+        drawBase(); renderKb(); update();
     }
 
     function drawBase() {
-        ctx.clearRect(0,0,180,180);
-        ctx.strokeStyle = "#334155"; ctx.lineWidth = 4;
+        ctx.clearRect(0,0,200,160);
+        ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 8; ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(20, 160); ctx.lineTo(160, 160);
-        ctx.moveTo(40, 160); ctx.lineTo(40, 20);
-        ctx.lineTo(120, 20); ctx.lineTo(120, 40);
+        ctx.moveTo(40, 140); ctx.lineTo(160, 140);
+        ctx.moveTo(70, 140); ctx.lineTo(70, 20);
+        ctx.lineTo(130, 20); ctx.lineTo(130, 40);
         ctx.stroke();
     }
 
     function drawPart(m) {
-        ctx.strokeStyle = "#1e3a8a";
+        ctx.strokeStyle = "#4f46e5"; ctx.lineWidth = 5;
         switch(m) {
-            case 1: ctx.beginPath(); ctx.arc(120, 55, 15, 0, Math.PI*2); ctx.stroke(); break;
-            case 2: ctx.beginPath(); ctx.moveTo(120, 70); ctx.lineTo(120, 120); ctx.stroke(); break;
-            case 3: ctx.beginPath(); ctx.moveTo(120, 80); ctx.lineTo(100, 100); ctx.stroke(); break;
-            case 4: ctx.beginPath(); ctx.moveTo(120, 80); ctx.lineTo(140, 100); ctx.stroke(); break;
-            case 5: ctx.beginPath(); ctx.moveTo(120, 120); ctx.lineTo(100, 150); ctx.stroke(); break;
+            case 1: ctx.beginPath(); ctx.arc(130, 55, 12, 0, Math.PI*2); ctx.stroke(); break;
+            case 2: ctx.beginPath(); ctx.moveTo(130, 67); ctx.lineTo(130, 105); ctx.stroke(); break;
+            case 3: ctx.beginPath(); ctx.moveTo(130, 75); ctx.lineTo(110, 95); ctx.stroke(); break;
+            case 4: ctx.beginPath(); ctx.moveTo(130, 75); ctx.lineTo(150, 95); ctx.stroke(); break;
+            case 5: ctx.beginPath(); ctx.moveTo(130, 105); ctx.lineTo(115, 130); ctx.stroke(); break;
+            case 6: ctx.beginPath(); ctx.moveTo(130, 105); ctx.lineTo(145, 130); ctx.stroke(); break;
         }
     }
 
@@ -303,6 +366,7 @@
         "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("").forEach(l => {
             const b = document.createElement('button');
             b.className = 'key'; b.innerText = l;
+            b.id = `key-${l}`;
             b.onclick = () => guess(l, b);
             box.appendChild(b);
         });
@@ -314,13 +378,30 @@
         if (state.word.includes(l)) {
             state.guesses.push(l);
             btn.classList.add('correct');
+            state.correctStreak++;
+            if(state.correctStreak >= 3) {
+                state.tips++; state.correctStreak = 0;
+                document.getElementById('tips-count').innerText = state.tips;
+            }
         } else {
-            state.mistakes++;
+            state.mistakes++; state.lives--; state.correctStreak = 0;
             btn.classList.add('wrong');
             drawPart(state.mistakes);
-            if (state.mistakes >= 5) end(false);
+            document.getElementById('lives').innerText = state.lives;
+            if (state.mistakes >= 6) end(false);
         }
         update();
+    }
+
+    function useObserver() {
+        if (state.tips <= 0) return;
+        const missing = state.word.split("").filter(l => !state.guesses.includes(l));
+        if (missing.length > 0) {
+            state.tips--;
+            document.getElementById('tips-count').innerText = state.tips;
+            const randomLetter = missing[Math.floor(Math.random() * missing.length)];
+            guess(randomLetter, document.getElementById(`key-${randomLetter}`));
+        }
     }
 
     function update() {
@@ -330,15 +411,13 @@
     }
 
     function solve() {
-        const val = prompt("¿Cuál es la palabra?");
+        const val = prompt("¿Ya lo sabes? Escribe la palabra:");
         if (val && val.toUpperCase() === state.word) {
-            state.guesses = state.word.split("");
-            update();
+            state.guesses = state.word.split(""); update();
         } else if (val) { 
-            alert("Incorrecto"); 
-            state.mistakes++; 
-            drawPart(state.mistakes); 
-            if(state.mistakes >= 5) end(false); 
+            state.mistakes++; state.lives--; drawPart(state.mistakes);
+            document.getElementById('lives').innerText = state.lives;
+            if(state.mistakes >= 6) end(false); 
         }
     }
 
@@ -347,28 +426,22 @@
         const box = document.getElementById('modal-box');
         over.style.display = 'flex';
         if (win) {
-            state.reward += 10;
-            box.innerHTML = `<h2>¡GANASTE!</h2><p>+ $10</p><button class="cat-btn" onclick="reset()">OTRA</button>`;
+            state.reward += 100;
+            box.innerHTML = `<h2 style="color:#10b981">¡GENIAL!</h2><p>Eres un maestro.</p><div style="font-size:2rem">🎁 +$100</div><button class="cat-btn" style="margin-top:15px" onclick="reset()">OTRA PARTIDA</button>`;
         } else {
-            state.lives--;
-            box.innerHTML = `<h2 style="color:red">PERDISTE</h2><p>Era: ${state.word}</p><button class="cat-btn" onclick="reset()">REINTENTAR</button>`;
+            box.innerHTML = `<h2 style="color:#ef4444">¡OH NO!</h2><p>Era: <b style="color:#4f46e5">${state.word}</b></p><button class="cat-btn" style="margin-top:15px; background:#ef4444" onclick="reset()">REINTENTAR</button>`;
         }
-        document.getElementById('lives').innerText = state.lives;
-        document.getElementById('reward').innerText = `$${state.reward}`;
+        document.getElementById('reward').innerText = state.reward;
     }
 
     function reset() {
         document.getElementById('overlay').style.display = 'none';
-        if (state.lives <= 0) {
-            alert("Vidas agotadas. Reiniciando juego.");
-            location.reload();
-        } else {
-            document.getElementById('screen-game').classList.remove('active');
-            document.getElementById('screen-start').classList.add('active');
-        }
+        document.getElementById('hint-box').style.display = 'none';
+        document.getElementById('screen-game').classList.remove('active');
+        document.getElementById('screen-start').classList.add('active');
     }
 
-    init();
+    window.onload = init;
 </script>
 </body>
 </html>
