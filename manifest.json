@@ -1,11 +1,12 @@
 {
-"name": "Gallows Game",
+"name": "Gallows by Checho",
 "short_name": "Gallows",
-"description": "Un clásico juego de ahorcado con categorías y recompensas.",
-"start_url": "./the_gallows.html",
+"description": "Un juego de ahorcado moderno y adictivo.",
+"start_url": "index.html",
 "display": "standalone",
-"background_color": "#1e3a8a",
+"background_color": "#0f172a",
 "theme_color": "#1e3a8a",
+"orientation": "portrait",
 "icons": [
 {
 "src": "icon-192.png",
